@@ -2,6 +2,7 @@ package com.kartik.hrms.controller;
 
 import java.util.Optional;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,8 +12,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kartik.hrms.dto.UserRequestDTO;
+import com.kartik.hrms.dto.UserResponseDTO;
 import com.kartik.hrms.entity.User;
 import com.kartik.hrms.service.UserService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/users")
@@ -26,9 +31,14 @@ public class UserController {
 
     // Create User
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        User savedUser = userService.createUser(user, null);
-        return ResponseEntity.ok(savedUser);
+    public ResponseEntity<UserResponseDTO> createUser(
+            @Valid @RequestBody UserRequestDTO request) {
+
+        UserResponseDTO response = userService.createUser(request, null);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
     }
 
     // Get User by Username
