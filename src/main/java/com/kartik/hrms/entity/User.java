@@ -17,7 +17,6 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Login credentials
     @Column(nullable = false, unique = true)
     private String username;
 
@@ -51,7 +50,7 @@ public class User {
     private Long updatedBy;
 
     // Constructors
-      public User() {
+    public User() {
         this.createdAt = LocalDateTime.now();
         this.isDeleted = false;
     }
@@ -66,7 +65,6 @@ public class User {
     }
 
     // Getters and Setters
-// ===== Email =====
     public String getEmail() {
         return email;
     }
@@ -75,7 +73,6 @@ public class User {
         this.email = email;
     }
 
-// ===== Status =====
     public Integer getStatus() {
         return status;
     }
@@ -84,7 +81,6 @@ public class User {
         this.status = status;
     }
 
-// ===== isDeleted =====
     public Boolean getIsDeleted() {
         return isDeleted;
     }
@@ -93,7 +89,6 @@ public class User {
         this.isDeleted = isDeleted;
     }
 
-// ===== deletedAt =====
     public LocalDateTime getDeletedAt() {
         return deletedAt;
     }
@@ -102,7 +97,6 @@ public class User {
         this.deletedAt = deletedAt;
     }
 
-// ===== createdAt =====
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -111,7 +105,6 @@ public class User {
         this.createdAt = createdAt;
     }
 
-// ===== updatedAt =====
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
@@ -120,7 +113,6 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
-// ===== createdBy =====
     public Long getCreatedBy() {
         return createdBy;
     }
@@ -129,7 +121,6 @@ public class User {
         this.createdBy = createdBy;
     }
 
-// ===== updatedBy =====
     public Long getUpdatedBy() {
         return updatedBy;
     }
@@ -138,4 +129,31 @@ public class User {
         this.updatedBy = updatedBy;
     }
 
+    public Long getId() {
+        return this.id;
+    }
+
+    public String getRole() {
+        return this.role;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getUsername(){
+        return this.username;
+    }
+
+    // public String getUsername() {
+    //     throw new UnsupportedOperationException("Not supported yet.");
+    // }
 }
