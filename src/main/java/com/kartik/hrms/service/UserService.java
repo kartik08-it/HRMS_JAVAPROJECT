@@ -1,14 +1,14 @@
 package com.kartik.hrms.service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
-
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
-
 import com.kartik.hrms.dto.UserRequestDTO;
 import com.kartik.hrms.dto.UserResponseDTO;
 import com.kartik.hrms.entity.User;
 import com.kartik.hrms.exception.BadRequestException;
+import com.kartik.hrms.exception.ResourceNotFoundException;
 import com.kartik.hrms.repository.UserRepository;
 
 @Service
@@ -16,15 +16,13 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    // Constructor Injection (Best Practice)
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    // Create User
+    // ================= CREATE =================
     public UserResponseDTO createUser(UserRequestDTO request, Long createdBy) {
 
-        // Check duplicate username
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             throw new BadRequestException("Username already exists");
         }
@@ -46,28 +44,76 @@ public class UserService {
 
         User savedUser = userRepository.save(user);
 
-        return new UserResponseDTO(
-                savedUser.getId(),
-                savedUser.getUsername(),
-                savedUser.getEmail(),
-                savedUser.getRole()
-        );
+        return mapToDTO(savedUser);
     }
 
-    // Get User by Username
-    public Optional<User> getByUsername(String username) {
-        return userRepository.findByUsername(username);
+    // ================= GET ALL =================
+    public List<UserResponseDTO> getAllUsers() {
+
+        return userRepository.findByIsDeletedFalse()
+                .stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
     }
 
-    // Soft Delete User
-    public void deleteUser(Long userId) {
-        Optional<User> optionalUser = userRepository.findById(userId);
+    // ================= GET BY ID =================
+    public UserResponseDTO getUserById(Long id) {
 
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            user.setIsDeleted(true);
-            user.setDeletedAt(LocalDateTime.now());
-            userRepository.save(user);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (user.getIsDeleted()) {
+            throw new ResourceNotFoundException("User not found");
         }
+
+        return mapToDTO(user);
+    }
+
+    // ================= UPDATE =================
+    public UserResponseDTO updateUser(Long id, UserRequestDTO request) {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+        user.setRole(request.getRole());
+        user.setUpdatedAt(LocalDateTime.now());
+
+        User updatedUser = userRepository.save(user);
+
+        return mapToDTO(updatedUser);
+    }
+
+    // ================= SOFT DELETE =================
+    public void softDeleteUser(Long id) {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        user.setIsDeleted(true);
+        user.setDeletedAt(LocalDateTime.now());
+
+        userRepository.save(user);
+    }
+
+    // ================= HARD DELETE =================
+    public void hardDeleteUser(Long id) {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        userRepository.delete(user);
+    }
+
+    // ================= MAPPER =================
+    private UserResponseDTO mapToDTO(User user) {
+
+        return new UserResponseDTO(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getRole()
+        );
     }
 }
