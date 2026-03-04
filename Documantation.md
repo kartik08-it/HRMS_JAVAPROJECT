@@ -174,3 +174,52 @@ java -jar target/hrms-0.0.1-SNAPSHOT.jar
 6. config
 7. exception
 
+
+---
+
+## 9. Today Implementation Log (Appended)
+
+### Functionalities Implemented
+- Implemented token-based authentication with login/logout and Bearer token validation middleware.
+- Added persistent token storage and token revocation support.
+- Enforced stateless Spring Security configuration for API requests.
+- Added encryption for sensitive user fields (email, phone) and hashing for password.
+- Added hash-based uniqueness checks for encrypted email/phone.
+- Implemented user CRUD with security checks and role normalization.
+- Introduced admin-first model:
+  - bootstrap admin creation endpoint
+  - admin-only access for `/api/users/**`
+- Split domain responsibilities:
+  - `users` table for admin login/access control
+  - `employees` table for employee profiles
+- Updated employee module with profile segmentation (`HR` / `EMPLOYEE`).
+- Added employee CRUD endpoints and service logic with admin authorization checks.
+- Introduced Flyway migration-based schema management.
+- Added migration files for employee table constraints and ownership/profile updates.
+
+### Files Added (New)
+- `src/main/java/com/kartik/hrms/entity/AuthToken.java`
+- `src/main/java/com/kartik/hrms/repository/AuthTokenRepository.java`
+- `src/main/java/com/kartik/hrms/security/AuthenticatedUser.java`
+- `src/main/java/com/kartik/hrms/security/AuthTokenFilter.java`
+- `src/main/java/com/kartik/hrms/security/CryptoService.java`
+- `src/main/java/com/kartik/hrms/security/TokenService.java`
+- `src/main/java/com/kartik/hrms/controller/EmployeeController.java`
+- `src/main/java/com/kartik/hrms/dto/LoginRequestDTO.java`
+- `src/main/java/com/kartik/hrms/dto/LoginResponseDTO.java`
+- `src/main/java/com/kartik/hrms/dto/EmployeeRequestDTO.java`
+- `src/main/java/com/kartik/hrms/dto/EmployeeResponseDTO.java`
+- `src/main/resources/db/migration/V1__employee_required_fields.sql`
+- `src/main/resources/db/migration/V2__employee_profile_and_owner_fk_update.sql`
+
+### Files Updated (Existing)
+- `pom.xml`
+- `src/main/resources/application.properties`
+- `src/main/java/com/kartik/hrms/config/SecurityConfig.java`
+- `src/main/java/com/kartik/hrms/entity/User.java`
+- `src/main/java/com/kartik/hrms/entity/Employee.java`
+- `src/main/java/com/kartik/hrms/repository/UserRepository.java`
+- `src/main/java/com/kartik/hrms/service/UserService.java`
+- `src/main/java/com/kartik/hrms/service/EmployeeService.java`
+- `src/main/java/com/kartik/hrms/controller/UserController.java`
+- `src/main/java/com/kartik/hrms/dto/UserResponseDTO.java`

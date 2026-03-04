@@ -8,7 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -19,21 +19,43 @@ public class Employee {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // One Employee → One User
-    @OneToOne
-    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    // Admin owner who created/manages this employee profile
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     // HR specific fields
+    @Column(nullable = false)
     private LocalDateTime joiningDate;
 
     private String profileImage;
 
+    @Column(nullable = false)
     private String department;
 
+    @Column(nullable = false)
     private String designation;
 
+    @Column(nullable = false)
     private Double salary;
+
+    @Column(nullable = false)
+    private String profileType;
+
+    @Column(unique = true)
+    private String username;
+
+    private String password;
+
+    private String email;
+
+    @Column(unique = true)
+    private String emailHash;
+
+    private String phone;
+
+    @Column(unique = true)
+    private String phoneHash;
 
     // Soft delete
     @Column(nullable = false)
@@ -118,6 +140,62 @@ public class Employee {
 
     public void setSalary(Double salary) {
         this.salary = salary;
+    }
+
+    public String getProfileType() {
+        return profileType;
+    }
+
+    public void setProfileType(String profileType) {
+        this.profileType = profileType;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getEmailHash() {
+        return emailHash;
+    }
+
+    public void setEmailHash(String emailHash) {
+        this.emailHash = emailHash;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getPhoneHash() {
+        return phoneHash;
+    }
+
+    public void setPhoneHash(String phoneHash) {
+        this.phoneHash = phoneHash;
     }
 
     public Boolean getIsDeleted() {
