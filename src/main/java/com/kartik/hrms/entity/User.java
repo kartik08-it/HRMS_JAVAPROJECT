@@ -30,6 +30,14 @@ public class User {
     @Column(unique = true)
     private String email;
 
+    @Column(unique = true)
+    private String emailHash;
+
+    private String phone;
+
+    @Column(unique = true)
+    private String phoneHash;
+
     // Account status: 0=inactive,1=active,2=blocked
     @Column(nullable = false)
     private Integer status = 1;
@@ -71,6 +79,30 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getEmailHash() {
+        return emailHash;
+    }
+
+    public void setEmailHash(String emailHash) {
+        this.emailHash = emailHash;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getPhoneHash() {
+        return phoneHash;
+    }
+
+    public void setPhoneHash(String phoneHash) {
+        this.phoneHash = phoneHash;
     }
 
     public Integer getStatus() {
@@ -153,7 +185,7 @@ public class User {
         return this.username;
     }
 
-    // public String getUsername() {
-    //     throw new UnsupportedOperationException("Not supported yet.");
-    // }
+    public String getPassword() {
+        return password;
+    }
 }
