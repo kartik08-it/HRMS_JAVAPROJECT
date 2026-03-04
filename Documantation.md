@@ -169,3 +169,8 @@ java -jar target/hrms-0.0.1-SNAPSHOT.jar
 1. entity
 2. repository
 3. service
+4. controller
+5. dto 
+6. config
+7. exception
+
