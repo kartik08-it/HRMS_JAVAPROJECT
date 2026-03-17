@@ -3,6 +3,8 @@ package com.kartik.hrms.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -22,4 +24,10 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     Optional<Employee> findByEmailHash(String emailHash);
 
     Optional<Employee> findByPhoneHash(String phoneHash);
+
+    Page<Employee> findByUsernameContainingIgnoreCaseAndIsDeletedFalse(
+            String username,
+            Pageable pageable
+    );
+    Page<Employee> findByIsDeletedFalse(Pageable pageable);
 }

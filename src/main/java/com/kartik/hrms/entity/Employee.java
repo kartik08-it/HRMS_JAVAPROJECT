@@ -42,6 +42,19 @@ public class Employee {
     @Column(nullable = false)
     private String profileType;
 
+    // UI-friendly identity fields
+    private String employeeCode;
+
+    private String fullName;
+
+    private String status;
+
+    private String manager;
+
+    private String location;
+
+    private String avatar;
+
     @Column(unique = true)
     private String username;
 
@@ -148,6 +161,54 @@ public class Employee {
 
     public void setProfileType(String profileType) {
         this.profileType = profileType;
+    }
+
+    public String getEmployeeCode() {
+        return employeeCode;
+    }
+
+    public void setEmployeeCode(String employeeCode) {
+        this.employeeCode = employeeCode;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getManager() {
+        return manager;
+    }
+
+    public void setManager(String manager) {
+        this.manager = manager;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     public String getUsername() {

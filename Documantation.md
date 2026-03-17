@@ -197,29 +197,38 @@ java -jar target/hrms-0.0.1-SNAPSHOT.jar
 - Introduced Flyway migration-based schema management.
 - Added migration files for employee table constraints and ownership/profile updates.
 
-### Files Added (New)
-- `src/main/java/com/kartik/hrms/entity/AuthToken.java`
-- `src/main/java/com/kartik/hrms/repository/AuthTokenRepository.java`
-- `src/main/java/com/kartik/hrms/security/AuthenticatedUser.java`
-- `src/main/java/com/kartik/hrms/security/AuthTokenFilter.java`
-- `src/main/java/com/kartik/hrms/security/CryptoService.java`
-- `src/main/java/com/kartik/hrms/security/TokenService.java`
-- `src/main/java/com/kartik/hrms/controller/EmployeeController.java`
-- `src/main/java/com/kartik/hrms/dto/LoginRequestDTO.java`
-- `src/main/java/com/kartik/hrms/dto/LoginResponseDTO.java`
-- `src/main/java/com/kartik/hrms/dto/EmployeeRequestDTO.java`
-- `src/main/java/com/kartik/hrms/dto/EmployeeResponseDTO.java`
-- `src/main/resources/db/migration/V1__employee_required_fields.sql`
-- `src/main/resources/db/migration/V2__employee_profile_and_owner_fk_update.sql`
 
-### Files Updated (Existing)
-- `pom.xml`
-- `src/main/resources/application.properties`
-- `src/main/java/com/kartik/hrms/config/SecurityConfig.java`
-- `src/main/java/com/kartik/hrms/entity/User.java`
-- `src/main/java/com/kartik/hrms/entity/Employee.java`
-- `src/main/java/com/kartik/hrms/repository/UserRepository.java`
-- `src/main/java/com/kartik/hrms/service/UserService.java`
-- `src/main/java/com/kartik/hrms/service/EmployeeService.java`
-- `src/main/java/com/kartik/hrms/controller/UserController.java`
-- `src/main/java/com/kartik/hrms/dto/UserResponseDTO.java`
+# 15 march 2026
+issue while login 
+  - user try to login
+  - system check user
+   SELECT * FROM users WHERE email_hash=?
+   - then system check the auth tokens
+   SELECT * FROM auth_tokens WHERE expires_at < NOW()
+   - then system try to delete that token 
+   authTokenRepository.delete(token)
+   - but because method is not  in transaction, hibernate throws error
+
+  
+  # 16 march 2026
+  Client (React / Postman)
+        ↓
+  EmployeeController
+          ↓
+  EmployeeService
+          ↓
+  EmployeeRepository
+          ↓
+  Database
+  
+
+# 17 march 2026
+debugged the migration issue while appending some columns in employees,
+currentlly for migration i have to run this much query to migrate the db 
+
+
+./mvnw -q -DskipTests \
+  -Dflyway.url=jdbc:mysql://localhost:3306/hrms_system \
+  -Dflyway.user=admin \
+  -Dflyway.password=password \
+  flyway:migrate
