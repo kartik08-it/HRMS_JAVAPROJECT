@@ -23,13 +23,14 @@ public class EmployeeRequestDTO {
     private String email;
 
     @Pattern(
-            regexp = "^[6-9]\\d{9}$",
-            message = "Phone number must be 10 digits and start with 6-9")
+            regexp = "^\\+?[0-9][0-9\\s-]{6,19}$",
+            message = "Phone number must be 7-20 digits and can include spaces or hyphens, with an optional leading +")
     private String phone;
 
     @NotNull(message = "Joining date is required")
     private LocalDateTime joiningDate;
 
+    @NotBlank(message = "Profile image is required")
     private String profileImage;
 
     @NotBlank(message = "Department is required")
@@ -43,6 +44,21 @@ public class EmployeeRequestDTO {
 
     @NotBlank(message = "Profile type is required")
     private String profileType;
+
+    private String employeeCode;
+
+    @NotBlank(message = "Full name is required")
+    private String fullName;
+
+    @NotBlank(message = "Status is required")
+    private String status;
+
+    private String avatar;
+
+    @NotBlank(message = "Manager is required")
+    private String manager;
+
+    private String location;
 
     public String getUsername() {
         return username;
@@ -122,5 +138,53 @@ public class EmployeeRequestDTO {
 
     public void setProfileType(String profileType) {
         this.profileType = profileType;
+    }
+
+    public String getEmployeeCode() {
+        return employeeCode;
+    }
+
+    public void setEmployeeCode(String employeeCode) {
+        this.employeeCode = employeeCode;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public String getManager() {
+        return manager;
+    }
+
+    public void setManager(String manager) {
+        this.manager = manager;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 }

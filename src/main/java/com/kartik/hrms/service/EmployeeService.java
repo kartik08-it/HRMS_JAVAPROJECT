@@ -1,9 +1,14 @@
 package com.kartik.hrms.service;
 
+import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -58,10 +63,32 @@ public class EmployeeService {
         employee.setDesignation(request.getDesignation());
         employee.setSalary(request.getSalary());
         employee.setProfileType(normalizeProfileType(request.getProfileType()));
+        employee.setEmployeeCode(normalizeOptional(request.getEmployeeCode()));
+        employee.setFullName(normalizeOptional(request.getFullName()));
+        employee.setStatus(normalizeStatus(request.getStatus()));
+        employee.setAvatar(normalizeOptional(request.getAvatar()));
+        employee.setManager(normalizeOptional(request.getManager()));
+        employee.setLocation(normalizeOptional(request.getLocation()));
         employee.setCreatedAt(LocalDateTime.now());
         employee.setIsDeleted(false);
 
         return mapToDTO(employeeRepository.save(employee));
+    }
+
+    public Page<EmployeeResponseDTO> getEmployees(int page, int size, String search) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Employee> employeePage;
+
+        if (search != null && !search.isBlank()) {
+            employeePage = employeeRepository
+                    .findByUsernameContainingIgnoreCaseAndIsDeletedFalse(search, pageable);
+        } else {
+            employeePage = employeeRepository.findByIsDeletedFalse(pageable);
+        }
+
+        return employeePage.map(this::mapToDTO);
     }
 
     public List<EmployeeResponseDTO> getAllActiveEmployees() {
@@ -106,6 +133,12 @@ public class EmployeeService {
         employee.setDesignation(request.getDesignation());
         employee.setSalary(request.getSalary());
         employee.setProfileType(normalizeProfileType(request.getProfileType()));
+        employee.setEmployeeCode(normalizeOptional(request.getEmployeeCode()));
+        employee.setFullName(normalizeOptional(request.getFullName()));
+        employee.setStatus(normalizeStatus(request.getStatus()));
+        employee.setAvatar(normalizeOptional(request.getAvatar()));
+        employee.setManager(normalizeOptional(request.getManager()));
+        employee.setLocation(normalizeOptional(request.getLocation()));
         employee.setUpdatedAt(LocalDateTime.now());
 
         return mapToDTO(employeeRepository.save(employee));
@@ -118,24 +151,25 @@ public class EmployeeService {
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
 
         employee.setIsDeleted(true);
+        employee.setStatus("inactive");
         employee.setDeletedAt(LocalDateTime.now());
         employeeRepository.save(employee);
     }
 
     private EmployeeResponseDTO mapToDTO(Employee employee) {
         return new EmployeeResponseDTO(
-                employee.getId(),
-                employee.getUser().getId(),
-                employee.getUser().getUsername(),
-                employee.getUsername(),
+                resolveEmployeeId(employee),
+                resolveName(employee),
                 cryptoService.decrypt(employee.getEmail()),
                 cryptoService.decrypt(employee.getPhone()),
-                employee.getJoiningDate(),
-                employee.getProfileImage(),
                 employee.getDepartment(),
-                employee.getDesignation(),
-                employee.getSalary(),
-                employee.getProfileType());
+                resolvePosition(employee),
+                resolveJoinDate(employee),
+                resolveStatus(employee),
+                resolveAvatar(employee),
+                formatSalary(employee.getSalary()),
+                employee.getManager(),
+                employee.getLocation());
     }
 
     private String normalizeProfileType(String profileType) {
@@ -154,6 +188,86 @@ public class EmployeeService {
         if (actor == null || actor.getRole() == null || !"ADMIN".equalsIgnoreCase(actor.getRole())) {
             throw new ForbiddenException("Only admin can perform this operation");
         }
+    }
+
+    private String normalizeOptional(String value) {
+        if (value == null) {
+            return null;
+        }
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
+    }
+
+    private String normalizeStatus(String status) {
+        String normalized = normalizeOptional(status);
+        if (normalized == null) {
+            throw new BadRequestException("Status is required");
+        }
+        return normalized.toLowerCase();
+    }
+
+    private String resolveName(Employee employee) {
+        String fullName = normalizeOptional(employee.getFullName());
+        if (fullName != null) {
+            return fullName;
+        }
+        return employee.getUsername();
+    }
+
+    private String resolveEmployeeId(Employee employee) {
+        String employeeCode = normalizeOptional(employee.getEmployeeCode());
+        if (employeeCode != null) {
+            return employeeCode;
+        }
+        if (employee.getId() == null) {
+            return null;
+        }
+        return String.format("EMP%03d", employee.getId());
+    }
+
+    private String resolveJoinDate(Employee employee) {
+        if (employee.getJoiningDate() == null) {
+            return null;
+        }
+        return employee.getJoiningDate().toLocalDate().toString();
+    }
+
+    private String resolveAvatar(Employee employee) {
+        String avatar = normalizeOptional(employee.getAvatar());
+        if (avatar != null) {
+            return avatar;
+        }
+        String name = resolveName(employee);
+        if (name == null || name.isBlank()) {
+            return null;
+        }
+        String[] parts = name.trim().split("\\s+");
+        if (parts.length == 1) {
+            return parts[0].substring(0, Math.min(2, parts[0].length())).toUpperCase();
+        }
+        return (parts[0].substring(0, 1) + parts[parts.length - 1].substring(0, 1)).toUpperCase();
+    }
+
+    private String resolvePosition(Employee employee) {
+        return employee.getDesignation();
+    }
+
+    private String resolveStatus(Employee employee) {
+        if (Boolean.TRUE.equals(employee.getIsDeleted())) {
+            return "inactive";
+        }
+        String status = normalizeOptional(employee.getStatus());
+        return status == null ? "active" : status.toLowerCase();
+    }
+
+    private String formatSalary(Double salary) {
+        if (salary == null) {
+            return null;
+        }
+        NumberFormat formatter = NumberFormat.getCurrencyInstance(Locale.US);
+        formatter.setMaximumFractionDigits(0);
+        formatter.setMinimumFractionDigits(0);
+        return formatter.format(salary);
     }
 
     private void validateCreateInput(EmployeeRequestDTO request) {

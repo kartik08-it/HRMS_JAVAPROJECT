@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.kartik.hrms.entity.AuthToken;
 import com.kartik.hrms.entity.User;
@@ -26,7 +27,8 @@ public class TokenService {
         this.tokenExpiryHours = tokenExpiryHours;
     }
 
-    public String generateToken(User user) {
+    @Transactional
+        public String generateToken(User user) {
         authTokenRepository.deleteByExpiresAtBefore(LocalDateTime.now());
         String token = createRandomToken();
         AuthToken authToken = new AuthToken();
