@@ -158,7 +158,9 @@ public class EmployeeService {
 
     private EmployeeResponseDTO mapToDTO(Employee employee) {
         return new EmployeeResponseDTO(
-                resolveEmployeeId(employee),
+                employee.getId(),
+                employee.getProfileImage(),
+                normalizeOptional(employee.getEmployeeCode()),
                 resolveName(employee),
                 cryptoService.decrypt(employee.getEmail()),
                 cryptoService.decrypt(employee.getPhone()),
@@ -212,17 +214,6 @@ public class EmployeeService {
             return fullName;
         }
         return employee.getUsername();
-    }
-
-    private String resolveEmployeeId(Employee employee) {
-        String employeeCode = normalizeOptional(employee.getEmployeeCode());
-        if (employeeCode != null) {
-            return employeeCode;
-        }
-        if (employee.getId() == null) {
-            return null;
-        }
-        return String.format("EMP%03d", employee.getId());
     }
 
     private String resolveJoinDate(Employee employee) {

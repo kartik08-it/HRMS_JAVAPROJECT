@@ -1,7 +1,12 @@
 package com.kartik.hrms.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class EmployeeResponseDTO {
-    private String id;
+    private Long id;
+    @JsonProperty("profile_image")
+    private String profileImage;
+    private String employeeCode;
     private String name;
     private String email;
     private String phone;
@@ -14,10 +19,12 @@ public class EmployeeResponseDTO {
     private String manager;
     private String location;
 
-    public EmployeeResponseDTO(String id, String name, String email, String phone, String department,
+    public EmployeeResponseDTO(Long id, String profileImage, String employeeCode, String name, String email, String phone, String department,
             String position, String joinDate, String status, String avatar, String salary, String manager,
             String location) {
         this.id = id;
+        this.profileImage = profileImage;
+        this.employeeCode = employeeCode;
         this.email = email;
         this.phone = phone;
         this.department = department;
@@ -31,8 +38,12 @@ public class EmployeeResponseDTO {
         this.location = location;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
+    }
+
+    public String getEmployeeCode() {
+        return employeeCode;
     }
 
     public String getName() {
@@ -45,6 +56,10 @@ public class EmployeeResponseDTO {
 
     public String getPhone() {
         return phone;
+    }
+
+    public String getProfileImage() {
+        return profileImage;
     }
 
     public String getJoinDate() {
