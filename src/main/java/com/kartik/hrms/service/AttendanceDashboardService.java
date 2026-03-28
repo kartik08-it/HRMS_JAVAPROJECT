@@ -240,16 +240,14 @@ public class AttendanceDashboardService {
                     continue;
                 }
                 String state = normalizeState(record.getState());
-                if ("PRESENT".equals(state)) {
-                    present++;
-                } else if ("LATE".equals(state)) {
-                    late++;
-                } else if ("WORK_FROM_HOME".equals(state)) {
-                    workFromHome++;
-                } else if ("LEAVE".equals(state)) {
-                    onLeave++;
-                } else if ("HALF_DAY".equals(state)) {
-                    halfDay++;
+                if (null != state) switch (state) {
+                    case "PRESENT" -> present++;
+                    case "LATE" -> late++;
+                    case "WORK_FROM_HOME" -> workFromHome++;
+                    case "LEAVE" -> onLeave++;
+                    case "HALF_DAY" -> halfDay++;
+                    default -> {
+                    }
                 }
             }
 
