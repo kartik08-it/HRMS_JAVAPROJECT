@@ -165,6 +165,25 @@ java -jar target/hrms-0.0.1-SNAPSHOT.jar
 - Database must exist before running.
 - Java 21 is required.
 
+---
+
+## 📊 Attendance Dashboard API
+
+Endpoint:
+```
+GET /api/attendance/dashboard?date=YYYY-MM-DD
+```
+
+Notes:
+- `date` is optional. If omitted, the server uses the current date.
+- Requires authenticated admin access.
+- Returns summary, department breakdown, recent activity, late arrivals, absentees, and weekly trend.
+
+### Sample Data
+- `src/main/resources/data.sql` seeds sample attendance data on startup.
+- It only inserts sample employees/attendance if at least one `ADMIN` user exists.
+- After creating an admin via `/api/users/bootstrap-admin`, restart the app to load the sample data.
+
 # Project Learning Curve :- 
 1. entity
 2. repository
