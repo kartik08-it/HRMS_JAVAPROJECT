@@ -16,6 +16,10 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     // Find all non-deleted employees
     List<Employee> findByIsDeletedFalse();
 
+    List<Employee> findByUserIdAndIsDeletedFalse(Long userId);
+
+    List<Employee> findByUserIdAndIsDeletedFalseAndDepartment(Long userId, String department);
+
     // Find by department
     List<Employee> findByDepartment(String department);
 
