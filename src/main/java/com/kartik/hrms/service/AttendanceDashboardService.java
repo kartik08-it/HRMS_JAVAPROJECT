@@ -26,8 +26,6 @@ import com.kartik.hrms.dto.WeeklyTrendDTO;
 import com.kartik.hrms.entity.AttendanceLog;
 import com.kartik.hrms.entity.AttendanceRecord;
 import com.kartik.hrms.entity.Employee;
-import com.kartik.hrms.exception.ForbiddenException;
-import com.kartik.hrms.exception.UnauthorizedException;
 import com.kartik.hrms.repository.AttendanceLogRepository;
 import com.kartik.hrms.repository.AttendanceRecordRepository;
 import com.kartik.hrms.repository.EmployeeRepository;
@@ -91,16 +89,14 @@ public class AttendanceDashboardService {
 
         for (AttendanceRecord record : recordByEmployeeId.values()) {
             String state = normalizeState(record.getState());
-            if ("PRESENT".equals(state)) {
-                present++;
-            } else if ("LATE".equals(state)) {
-                late++;
-            } else if ("WORK_FROM_HOME".equals(state)) {
-                workFromHome++;
-            } else if ("LEAVE".equals(state)) {
-                onLeave++;
-            } else if ("HALF_DAY".equals(state)) {
-                halfDay++;
+            if (null != state) switch (state) {
+                case "PRESENT" -> present++;
+                case "LATE" -> late++;
+                case "WORK_FROM_HOME" -> workFromHome++;
+                case "LEAVE" -> onLeave++;
+                case "HALF_DAY" -> halfDay++;
+                default -> {
+                }
             }
         }
 
@@ -336,16 +332,6 @@ public class AttendanceDashboardService {
         double hours = minutesLate / 60.0;
         DecimalFormat formatter = new DecimalFormat("#.#");
         return formatter.format(hours) + " hrs";
-    }
-
-    private Long requireAdmin(AuthenticatedUser actor) {
-        if (actor == null || actor.getUserId() == null) {
-            throw new UnauthorizedException("Authentication token is required");
-        }
-        if (actor.getRole() == null || !"ADMIN".equalsIgnoreCase(actor.getRole())) {
-            throw new ForbiddenException("Only admin can access attendance dashboard");
-        }
-        return actor.getUserId();
     }
 
     private static class DepartmentAggregate {
