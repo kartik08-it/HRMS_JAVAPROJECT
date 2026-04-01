@@ -29,7 +29,9 @@ public class AttendanceController {
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
             LocalDate date,
+            @RequestParam(required = false)
+            String range,
             @AuthenticationPrincipal AuthenticatedUser actor) {
-        return ResponseEntity.ok(attendanceDashboardService.getDashboard(date, actor));
+        return ResponseEntity.ok(attendanceDashboardService.getDashboard(date, range, actor));
     }
 }
