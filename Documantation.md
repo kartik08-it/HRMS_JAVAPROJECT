@@ -171,13 +171,26 @@ java -jar target/hrms-0.0.1-SNAPSHOT.jar
 
 Endpoint:
 ```
-GET /api/attendance/dashboard?date=YYYY-MM-DD
+GET /api/attendance/dashboard?date=YYYY-MM-DD&range=day|week|month|year
 ```
 
 Notes:
 - `date` is optional. If omitted, the server uses the current date.
+- `range` is optional. Supported values: `day`, `week`, `month`, `year`.
+- `range=day` keeps the dashboard focused on the selected date.
+- `range=week` uses the last 7 days ending on the selected date.
+- `range=month` uses the selected date's month from day 1 up to the selected date.
+- `range=year` uses the selected date's year from January 1 up to the selected date.
 - Requires authenticated admin access.
-- Returns summary, department breakdown, recent activity, late arrivals, absentees, and weekly trend.
+- Returns summary, department breakdown, recent activity, late arrivals, absentees, weekly trend, and the applied range window (`date`, `range`, `startDate`, `endDate`).
+
+Examples:
+```http
+GET /api/attendance/dashboard?date=2026-03-29
+GET /api/attendance/dashboard?date=2026-03-29&range=week
+GET /api/attendance/dashboard?date=2026-03-29&range=month
+GET /api/attendance/dashboard?date=2026-03-29&range=year
+```
 
 ### Sample Data
 - `src/main/resources/data.sql` seeds sample attendance data on startup.
